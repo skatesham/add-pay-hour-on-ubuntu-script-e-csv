@@ -1,6 +1,28 @@
 # Apontamento de Horas
 
-Script CLI para coletar rápida­mente horas trabalhadas e salvá-las em `apontamentos.csv`.
+CLI simples para registrar horas por projeto diretamente em CSV.
+
+## Por que usar?
+
+- **Problema**: acompanhar horas em múltiplos clientes vira bagunça entre planilhas e anotações soltas.
+- **Solução**: um fluxo único no terminal que cria projetos, solicita valor-hora e gera lançamentos organizados.
+
+## Funcionalidades
+
+- Seleção/ criação rápida de projetos (um CSV por projeto).
+- Valor-hora dinâmico armazenado no próprio arquivo.
+- Validação de tempo (inclui alerta para jornadas muito longas).
+- Pré-visualização antes de gravar.
+- Resumo das pendências (horas/valores não pagos).
+
+## Como funciona
+
+1. Ao iniciar, todos os `.csv` da pasta são listados (cada um é um projeto).
+2. Você pode escolher um existente ou criar outro; ao criar, informe o valor-hora padrão daquele cliente.
+3. Para cada apontamento basta preencher:
+   - **Atividade** (texto livre)
+   - **Tempo** usando `Xm`, `Yh` ou combinações (`1h30m`, `45m`)
+4. O script valida jornadas longas, mostra uma prévia, grava no CSV escolhido e atualiza o resumo de pendências.
 
 ## Começando rápido
 
@@ -8,21 +30,6 @@ Script CLI para coletar rápida­mente horas trabalhadas e salvá-las em `aponta
 chmod +x apontamento_horas.py
 ./apontamento_horas.py
 ```
-
-Ao iniciar, o script lista todos os arquivos `.csv` na pasta e permite:
-
-1. Selecionar um projeto existente (ex.: `ecocria_aponta.csv`)
-2. Criar um novo projeto digitando um nome; o arquivo é criado automaticamente
-
-Ao criar um projeto é solicitado o valor-hora que ficará salvo no CSV e será usado automaticamente em todos os próximos lançamentos. Você pode deixá-lo vazio para aceitar o valor sugerido, ou informar outro número.
-
-Depois de escolher o projeto, informe:
-
-1. **Atividade** – breve descrição (obrigatório)
-2. **Tempo** – use `Xm`, `Yh` ou combinações (`1h30m`, `45m`, `2h15m`)
-   - Durações maiores que 5h pedem confirmação extra
-
-Antes de gravar, o script mostra uma pré-visualização e só salva se você confirmar. Depois de salvo, ele atualiza os totais de horas/valores pendentes (não pagos).
 
 ### Colunas do CSV
 
@@ -53,9 +60,9 @@ Depois rode `source ~/.zshrc` (ou abra um novo terminal) e use:
 addhoras
 ```
 
-## Exemplo de execução
+# Exemplo de execução
 ```bash
-➜  apontamento-horas git:(main) addhoras
+➜ addhoras
 
 === Projetos disponíveis ===
 1. ecocria_aponta.csv
@@ -85,7 +92,6 @@ Projeto            : ecocria_aponta.csv
 Total horas não pagas: 1h
 Total não pago      : R$ 113,63
 ----------------------------------------
-
 ```
 
 ## Contribuições e Créditos

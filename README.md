@@ -67,8 +67,8 @@ Obs: os scripts sincronizam o layout do CSV automaticamente (adicionam colunas f
 ## Alias opcional (zsh)
 
 ```bash
-alias addhoras="$HOME/CascadeProjects/apontamento-horas/apontamento_horas.py"
-alias paghoras="$HOME/CascadeProjects/apontamento-horas/pagamentos.py"
+alias addhoras="$HOME/add-pay-hour-on-ubuntu-script-e-csv/apontamento_horas.py"
+alias paghoras="$HOME/add-pay-hour-on-ubuntu-script-e-csv/pagamentos.py"
 ```
 
 Depois:

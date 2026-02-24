@@ -1,99 +1,84 @@
-# Apontamento de Horas
+# Apontamento de Horas + Pagamentos
 
-CLI simples para registrar horas por projeto diretamente em CSV.
+CLI simples para registrar horas por projeto em CSV e controlar pagamentos (inclui parcial).
 
-## Por que usar?
+## O que resolve
 
-- **Problema**: acompanhar horas em múltiplos clientes vira bagunça entre planilhas e anotações soltas.
-- **Solução**: um fluxo único no terminal que cria projetos, solicita valor-hora e gera lançamentos organizados.
+- Um CSV por cliente/projeto.
+- Registra apontamentos com valor-hora e valor calculado.
+- Mostra saldo pendente.
+- Baixa pagamentos em ordem sequencial (com suporte a pagamento parcial e histórico com data/descrição).
 
-## Funcionalidades
+## Scripts
 
-- Seleção/ criação rápida de projetos (um CSV por projeto).
-- Valor-hora dinâmico armazenado no próprio arquivo.
-- Validação de tempo (inclui alerta para jornadas muito longas).
-- Pré-visualização antes de gravar.
-- Resumo das pendências (horas/valores não pagos).
+### 1) Apontar horas
+Arquivo: `apontamento_horas.py`
 
-## Como funciona
-
-1. Ao iniciar, todos os `.csv` da pasta são listados (cada um é um projeto).
-2. Você pode escolher um existente ou criar outro; ao criar, informe o valor-hora padrão daquele cliente.
-3. Para cada apontamento basta preencher:
-   - **Atividade** (texto livre)
-   - **Tempo** usando `Xm`, `Yh` ou combinações (`1h30m`, `45m`)
-4. O script valida jornadas longas, mostra uma prévia, grava no CSV escolhido e atualiza o resumo de pendências.
-
-## Começando rápido
+Operação: cria/seleciona projeto e grava **1** apontamento por execução.
 
 ```bash
 chmod +x apontamento_horas.py
 ./apontamento_horas.py
+````
+
+### 2) Consultar saldo
+
+Arquivo: `pagamentos.py`
+
+Menu → `1. Consultar saldo`
+
+```bash
+chmod +x pagamentos.py
+./pagamentos.py
 ```
 
-### Colunas do CSV
+### 3) Efetivar pagamento
 
-| Coluna       | Descrição                              |
-|--------------|----------------------------------------|
-| n            | ID sequencial                          |
-| tempo_total  | Texto do tempo informado               |
-| atividade    | Descrição digitada                     |
-| data_inicio  | Término − duração                      |
-| data_fim     | Horário do lançamento                  |
-| valor_hora   | Valor-hora definido para o projeto     |
-| valor        | `(minutos / 60) * valor_hora`          |
-| pago         | Sempre `"Não"` (atualize manualmente)  |
+Arquivo: `pagamentos.py`
 
-Cada execução grava apenas **um** apontamento.
+Menu → `2. Efetivar pagamento`
 
-## Alias no shell
+* Pede **data** (default agora) e **descrição** (ex: Pix, NF, referência).
+* Aplica o valor nos itens **não pagos**, na ordem do CSV.
+* Se não cobrir o próximo item, marca como **Parcial** e mantém `valor_pendente` para o próximo pagamento.
 
-Adicione ao `~/.zshrc` para rodar como `addhoras`:
+## Estrutura do CSV (por projeto)
+
+Colunas principais (apontamentos):
+
+* `n` (id)
+* `tempo_total`
+* `atividade`
+* `data_inicio`
+* `data_fim`
+* `valor_hora`
+* `valor`
+
+Controle de pagamento:
+
+* `pago`: `Não` | `Parcial` | `Sim`
+* `valor_pago`: quanto já foi aplicado naquele item
+* `valor_pendente`: quanto falta (quando estiver `Parcial`)
+* `data_pagamento`: histórico de datas (quando recebeu valor)
+* `descricao_pagamento`: histórico com data/descrição/valor aplicado
+
+Obs: os scripts sincronizam o layout do CSV automaticamente (adicionam colunas faltantes).
+
+## Alias opcional (zsh)
 
 ```bash
 alias addhoras="$HOME/CascadeProjects/apontamento-horas/apontamento_horas.py"
+alias paghoras="$HOME/CascadeProjects/apontamento-horas/pagamentos.py"
 ```
 
-Depois rode `source ~/.zshrc` (ou abra um novo terminal) e use:
+Depois:
 
 ```bash
+source ~/.zshrc
 addhoras
+paghoras
 ```
 
-# Exemplo de execução
-```bash
-➜ addhoras
+## Créditos
 
-=== Projetos disponíveis ===
-1. ecocria_aponta.csv
-2. Criar novo projeto
-Selecione uma opção: 1
-
-=== Novo Apontamento de Horas (ecocria_aponta.csv) ===
-Atividade: 123
-Tempo (ex: 30m, 1h30m, 2h): 1h
-
-Pré-visualização do registro:
-----------------------------------------
-ID (n)      : 1
-Atividade   : 123
-Tempo total : 1h
-Início      : 2025-12-07 18:31:59
-Fim         : 2025-12-07 19:31:59
-Valor (R$)  : R$ 113,63
-----------------------------------------
-Confirmar gravação? (s/n): s
-
-✅ Apontamento salvo em ecocria_aponta.csv
-
-Pendências:
-----------------------------------------
-Projeto            : ecocria_aponta.csv
-Total horas não pagas: 1h
-Total não pago      : R$ 113,63
-----------------------------------------
-```
-
-## Contribuições e Créditos
-
-- Sham Vinicius Fiorin
+* Sham Vinicius Fiorin
